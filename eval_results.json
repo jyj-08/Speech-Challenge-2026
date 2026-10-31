@@ -1,0 +1,71 @@
+{
+  "metrics": {
+    "wer": 0.4309252217997465,
+    "cer": 0.30949414403189635
+  },
+  "config": {
+    "model_id": "openai/whisper-small",
+    "checkpoint_dir": "/content/drive/MyDrive/Speech-Challenge-2026/checkpoints/tactical_whisper",
+    "dataset_name": "openslr/librispeech_asr",
+    "subset": "clean",
+    "split": "validation[:50]",
+    "degrade": true,
+    "metrics": [
+      "wer",
+      "cer"
+    ],
+    "output_file": "/content/drive/MyDrive/Speech-Challenge-2026/checkpoints/eval_results.json"
+  },
+  "samples": [
+    {
+      "index": 0,
+      "reference": "HE WAS IN A FEVERED STATE OF MIND OWING TO THE BLIGHT HIS WIFE'S ACTION THREATENED TO CAST UPON HIS ENTIRE FUTURE",
+      "prediction": "HE WAS IN A FEVER STATE OF MIND OWING TO THE BLIGHT HIS WIFE'S ACTION THREATED HIS HATS OF HOT IN THE FIRE SEAVER"
+    },
+    {
+      "index": 1,
+      "reference": "HE WOULD HAVE TO PAY HER THE MONEY WHICH SHE WOULD NOW REGULARLY DEMAND OR THERE WOULD BE TROUBLE IT DID NOT MATTER WHAT HE DID",
+      "prediction": "HE WOULD HAVE TO PAY HER THE MONEY WHICH SHE WOULD NOW REGULARLY DEMAND OR THERE WOULD BE TROUBLE IT DID NOT MATTER WHAT SHE DID"
+    },
+    {
+      "index": 2,
+      "reference": "HURSTWOOD WALKED THE FLOOR MENTALLY ARRANGING THE CHIEF POINTS OF HIS SITUATION",
+      "prediction": "HIRST WOULD WALK A FOR OUR FENDELLY AND ANSWER IN THE GUESS PART OF HIS DETAILS"
+    },
+    {
+      "index": 3,
+      "reference": "HE ALSO THOUGHT OF HIS MANAGERIAL POSITION",
+      "prediction": "HE ALSO THOUGHT OF HIS HANDED GERIAL POSITION"
+    },
+    {
+      "index": 4,
+      "reference": "HOW WOULD THE PAPERS TALK ABOUT IT",
+      "prediction": "HOW WOULD THE PAPERS TALK ABOUT IT"
+    },
+    {
+      "index": 5,
+      "reference": "MANY LITTLE WRINKLES GATHERED BETWEEN HIS EYES AS HE CONTEMPLATED THIS AND HIS BROW MOISTENED",
+      "prediction": "MANY LITTLE RINKLES GATHERED BEING IN HIS EYES AS HE CONTACTED THIS AND HIS BROW MOISTENED"
+    },
+    {
+      "index": 6,
+      "reference": "HE COULD ARRANGE THAT SATISFACTORILY FOR CARRIE WOULD BE GLAD TO WAIT IF NECESSARY",
+      "prediction": "HE COULD ARRANGED THAT SATISFACTORY FOR A CARRIE WOULD BE GLAD TO WAIT IF NECESSARY"
+    },
+    {
+      "index": 7,
+      "reference": "HE WOULD SEE HOW THINGS TURNED OUT TO MORROW AND THEN HE WOULD TALK TO HER THEY WERE GOING TO MEET AS USUAL",
+      "prediction": "HE WOULD SEE HOW THINGS TURNED OUT TO MARL AND THEN HE WOULD TALK TO HIM IT WAS GOING TO MEET AS USUAL"
+    },
+    {
+      "index": 8,
+      "reference": "FOR SOME REASON HE FELT AS IF SOMETHING MIGHT COME THAT WAY AND WAS RELIEVED WHEN ALL THE ENVELOPES HAD BEEN SCANNED AND NOTHING SUSPICIOUS NOTICED",
+      "prediction": "THERE SOME REASON HE SELFLY THAT SOMETHING MIGHT COME THAT WAY AND WAS RELEASED WITH ALL THE ENVALUES THAT WENT INSPECT AND NOTHING POSITION SIREN"
+    },
+    {
+      "index": 9,
+      "reference": "WHILE THE DANGER HAD NOT LESSENED IT HAD NOT AS YET MATERIALISED AND WITH HIM NO NEWS WAS GOOD NEWS",
+      "prediction": "WELL THE DANGER HAD NOT LESSENED IT HAD NOT AS YET MATERIALIZED AND WITH HIM NO NEWS WAS DIGITAL"
+    }
+  ]
+}
