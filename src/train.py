@@ -2,6 +2,7 @@
 
 Integrates data loading, degradation, preprocessing, LoRA modeling, and training.
 Supports YAML configuration, reproducible experiment tracking, and fast dry-runs via max_steps.
+Supports flexible LoRA hyperparameters (rank, alpha, target modules) for ablation studies.
 """
 
 import argparse
@@ -89,6 +90,11 @@ def run_pipeline(
     learning_rate: float = 1e-3,
     seed: int = 42,
     skip_zero_shot: bool = False,
+    lora_r: int = 8,
+    lora_alpha: int = 32,
+    lora_target_modules: Optional[List[str]] = None,
+    lora_dropout: float = 0.05,
+    lora_bias: str = "none",
     logger: Optional[Any] = None,
 ) -> Dict[str, float]:
     """Run full end-to-end tactical speech recognition training and evaluation pipeline."""
@@ -148,15 +154,20 @@ def run_pipeline(
     prepared_dataset = prepare_dataset_for_whisper(tactical_dataset, processor=processor)
     data_collator = DataCollatorSpeechSeq2SeqWithPadding(processor=processor)
 
-    # 6. LoRA Model Setup
-    logger.info("\n--- [Step 3] LoRA Setup ---")
+    # 6. LoRA Model Setup (dynamically configured from YAML config / args)
+    if lora_target_modules is None:
+        lora_target_modules = ["q_proj", "v_proj"]
+
+    logger.info(
+        f"\n--- [Step 3] LoRA Setup (r={lora_r}, alpha={lora_alpha}, targets={lora_target_modules}, dropout={lora_dropout}) ---"
+    )
     peft_model = setup_lora_model(
         model=model,
-        r=8,
-        lora_alpha=32,
-        target_modules=["q_proj", "v_proj"],
-        lora_dropout=0.05,
-        bias="none",
+        r=lora_r,
+        lora_alpha=lora_alpha,
+        target_modules=lora_target_modules,
+        lora_dropout=lora_dropout,
+        bias=lora_bias,
     )
 
     # 7. Model Fine-Tuning
@@ -282,6 +293,37 @@ def parse_args() -> argparse.Namespace:
         default=None,
         help="Skip initial zero-shot baseline evaluation",
     )
+    # LoRA Ablation CLI Arguments
+    parser.add_argument(
+        "--lora_r",
+        type=int,
+        default=None,
+        help="LoRA rank dimension (default from config or 8)",
+    )
+    parser.add_argument(
+        "--lora_alpha",
+        type=int,
+        default=None,
+        help="LoRA alpha scaling parameter (default from config or 32)",
+    )
+    parser.add_argument(
+        "--lora_target_modules",
+        nargs="+",
+        default=None,
+        help="Target module names for LoRA (e.g. --lora_target_modules q_proj v_proj)",
+    )
+    parser.add_argument(
+        "--lora_dropout",
+        type=float,
+        default=None,
+        help="LoRA dropout probability (default from config or 0.05)",
+    )
+    parser.add_argument(
+        "--lora_bias",
+        type=str,
+        default=None,
+        help="LoRA bias mode (none, all, lora_only)",
+    )
     return parser.parse_args()
 
 
@@ -301,6 +343,7 @@ if __name__ == "__main__":
     dataset_cfg = cfg.get("dataset", {})
     train_cfg = cfg.get("training", {})
     exp_cfg = cfg.get("experiment", {})
+    lora_cfg = cfg.get("lora", {})
 
     model_id = cli_args.model_id or model_cfg.get("model_id", "openai/whisper-small")
     dataset_name = cli_args.dataset_name or dataset_cfg.get("name", "openslr/librispeech_asr")
@@ -314,6 +357,13 @@ if __name__ == "__main__":
     learning_rate = cli_args.learning_rate or train_cfg.get("learning_rate", 1e-3)
     seed = cli_args.seed or exp_cfg.get("seed", 42)
     skip_zero_shot = cli_args.skip_zero_shot if cli_args.skip_zero_shot is not None else train_cfg.get("skip_zero_shot", False)
+
+    # LoRA settings from config / CLI
+    lora_r = cli_args.lora_r if cli_args.lora_r is not None else lora_cfg.get("r", 8)
+    lora_alpha = cli_args.lora_alpha if cli_args.lora_alpha is not None else lora_cfg.get("lora_alpha", 32)
+    lora_target_modules = cli_args.lora_target_modules or lora_cfg.get("target_modules", ["q_proj", "v_proj"])
+    lora_dropout = cli_args.lora_dropout if cli_args.lora_dropout is not None else lora_cfg.get("lora_dropout", 0.05)
+    lora_bias = cli_args.lora_bias or lora_cfg.get("bias", "none")
 
     logger = setup_logger("train")
     if config_file:
@@ -332,5 +382,10 @@ if __name__ == "__main__":
         learning_rate=learning_rate,
         seed=seed,
         skip_zero_shot=skip_zero_shot,
+        lora_r=lora_r,
+        lora_alpha=lora_alpha,
+        lora_target_modules=lora_target_modules,
+        lora_dropout=lora_dropout,
+        lora_bias=lora_bias,
         logger=logger,
     )

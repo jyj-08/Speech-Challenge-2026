@@ -62,7 +62,7 @@ def setup_lora_model(
     if target_modules is None:
         target_modules = ["q_proj", "v_proj"]
 
-    print("Configuring LoRA (Parameter-Efficient Fine-Tuning)...")
+    print(f"Configuring LoRA (r={r}, lora_alpha={lora_alpha}, target_modules={target_modules}, dropout={lora_dropout})...")
     lora_config = LoraConfig(
         r=r,
         lora_alpha=lora_alpha,

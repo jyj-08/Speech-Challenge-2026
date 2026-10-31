@@ -9,7 +9,9 @@
 ```text
 Speech-Challenge-2026/
 ├── configs/                    # 실험 및 하이퍼파라미터 설정 파일
-│   └── default_config.yaml     # 모델, 데이터셋, LoRA, 훈련 하이퍼파라미터 기본 설정
+│   ├── default_config.yaml     # 모델, 데이터셋, LoRA, 훈련 하이퍼파라미터 기본 설정
+│   ├── config_rank32.yaml      # [Ablation] LoRA 랭크 확장(r=32) 실험 설정
+│   └── config_all_attn.yaml    # [Ablation] 전체 어텐션(q, k, v, out) 확장 실험 설정
 │
 ├── data/                       # 로컬 데이터셋 저장소 (.gitignore 대상)
 │
@@ -60,6 +62,12 @@ python src/train.py
 
 # 특정 config 파일을 지정하여 실행
 python src/train.py --config configs/default_config.yaml
+
+# Ablation Study: LoRA Rank 32 실험 실행
+python src/train.py --config configs/config_rank32.yaml
+
+# Ablation Study: 전체 어텐션 모듈(q, k, v, out) 확장 실험 실행
+python src/train.py --config configs/config_all_attn.yaml
 
 # CLI 인자를 전달하여 특정 하이퍼파라미터 오버라이드
 python src/train.py --epochs 3 --batch_size 4 --learning_rate 0.0005 --output_dir checkpoints/exp_01
