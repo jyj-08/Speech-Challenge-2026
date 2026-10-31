@@ -368,8 +368,9 @@
             </ul>
         </section>
 
-        <section id="leaderboard">
+        <<section id="leaderboard">
             <h2>리더보드 (Leaderboard)</h2>
+            <p>파라미터 효율적 미세조정(PEFT)을 거친 모델이 극단적 잡음 환경에서 원본 모델 대비 <strong>약 27.6%p의 인식률 향상</strong>을 달성했음을 확인했습니다.</p>
             <table>
                 <thead>
                     <tr>
@@ -380,84 +381,84 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
+                    <tr style="background-color: #f0fdf4;">
                         <td><span style="font-size: 1.2rem;">🥇</span></td>
                         <td><strong>Tactical Whisper (Ours)</strong></td>
                         <td>LoRA Fine-tuning (Attention <code>q_proj</code>, <code>v_proj</code>)</td>
-                        <td><strong>TBD (학습 진행 중)</strong></td>
+                        <td><strong>43.09%</strong></td>
                     </tr>
                     <tr>
                         <td>2</td>
                         <td>Whisper Small</td>
                         <td>Zero-shot Baseline</td>
-                        <td>TBD</td>
+                        <td>70.72%</td>
                     </tr>
                 </tbody>
             </table>
-        </section>
+            </section>
+            <section id="examples">
+                <h2>사례 (Examples)</h2>
+                <p>동일한 대화 스크립트가 전장 환경에서 어떻게 변형되며, 제안하는 모델이 이를 어떻게 극복하는지 보여주는 샘플입니다.</p>
 
-        <section id="examples">
-            <h2>사례 (Examples)</h2>
-            <p>동일한 대화 스크립트가 전장 환경에서 어떻게 변형되며, 제안하는 모델이 이를 어떻게 극복하는지 보여주는 샘플입니다.</p>
-
-            <div class="example-box">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <h3 style="margin: 0;">Sample 1. 극단적 대역폭 제한 및 노이즈</h3>
-                    <span class="badge">SNR: -2dB</span>
-                </div>
-
-                <div>
-                    <strong>전장 합성 오디오 (Tactical Degraded)</strong><br>
-                    <audio controls style="width: 100%; margin-top: 10px;">
-                        <!-- 실제 오디오 파일 경로로 수정 필요 -->
-                        <source src="tactical_sample_01.wav" type="audio/wav">
-                        Your browser does not support the audio element.
-                    </audio>
-                </div>
-
-                <div class="transcript-compare">
-                    <div class="transcript-item">
-                        <strong>Ground Truth (정답)</strong>
-                        <p>the tactical situation requires immediate evacuation of sector seven.</p>
+                <div class="example-box">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <h3 style="margin: 0;">Sample 1. 극단적 대역폭 제한 및 노이즈</h3>
+                        <span class="badge">SNR: -2dB</span>
                     </div>
-                    <div class="transcript-item">
-                        <strong>Baseline (Zero-shot) 예측</strong>
-                        <p>the <span class="error-text">practical</span> situation requires <span
-                                class="error-text">[SILENCE]</span> evacuation of sector <span
-                                class="error-text">eleven</span>.</p>
+
+                    <div>
+                        <strong>전장 합성 오디오 (Tactical Degraded)</strong><br>
+                        <audio controls style="width: 100%; margin-top: 10px;">
+                            <!-- 실제 오디오 파일 경로로 수정 필요 -->
+                            <source src="tactical_sample_01.wav" type="audio/wav">
+                            Your browser does not support the audio element.
+                        </audio>
+                    </div>
+
+                    <div class="transcript-compare">
+                        <div class="transcript-item">
+                            <strong>Ground Truth (정답)</strong>
+                            <p>the tactical situation requires immediate evacuation of sector seven.</p>
+                        </div>
+                        <div class="transcript-item">
+                            <strong>Baseline (Zero-shot) 예측</strong>
+                            <p>the <span class="error-text">practical</span> situation requires <span
+                                    class="error-text">[SILENCE]</span> evacuation of sector <span
+                                    class="error-text">eleven</span>.</p>
+                        </div>
+                    </div>
+                    <div class="transcript-compare"
+                        style="grid-template-columns: 1fr; background: #f0fdf4; border: 1px solid #bbf7d0;">
+                        <div class="transcript-item">
+                            <strong style="color: #166534;">Tactical Whisper (Ours) 예측</strong>
+                            <p>the tactical situation requires immediate evacuation of sector seven.</p>
+                        </div>
                     </div>
                 </div>
-                <div class="transcript-compare"
-                    style="grid-template-columns: 1fr; background: #f0fdf4; border: 1px solid #bbf7d0;">
-                    <div class="transcript-item">
-                        <strong style="color: #166534;">Tactical Whisper (Ours) 예측</strong>
-                        <p>the tactical situation requires immediate evacuation of sector seven.</p>
-                    </div>
+            </section>
+
+            <section id="resources">
+                <h2>코드와 자료 (Resources)</h2>
+                <p>본 프로젝트는 <strong>Google Colab T4 GPU</strong> 환경에서 PyTorch 및 Hugging Face 생태계(Transformers, PEFT)를
+                    기반으로
+                    작성되었습니다. 모든 코드는 MLOps 구조에 맞게 모듈화되어 아래 저장소에 공개되어 있습니다.</p>
+
+                <div style="text-align: center; margin-top: 30px;">
+                    <a href="https://github.com/jyj-08/Speech-Challenge-2026" class="btn" target="_blank">
+                        <svg style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px; fill: currentColor;"
+                            viewBox="0 0 24 24">
+                            <path
+                                d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+                        </svg>
+                        개인 GitHub 저장소 방문
+                    </a>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <section id="resources">
-            <h2>코드와 자료 (Resources)</h2>
-            <p>본 프로젝트는 <strong>Google Colab T4 GPU</strong> 환경에서 PyTorch 및 Hugging Face 생태계(Transformers, PEFT)를 기반으로
-                작성되었습니다. 모든 코드는 MLOps 구조에 맞게 모듈화되어 아래 저장소에 공개되어 있습니다.</p>
-
-            <div style="text-align: center; margin-top: 30px;">
-                <a href="https://github.com/jyj-08/Speech-Challenge-2026" class="btn" target="_blank">
-                    <svg style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px; fill: currentColor;"
-                        viewBox="0 0 24 24">
-                        <path
-                            d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
-                    </svg>
-                    개인 GitHub 저장소 방문
-                </a>
-            </div>
-        </section>
-
-        <footer
-            style="text-align: center; padding-top: 40px; color: var(--text-muted); font-size: 0.9rem; border-top: 1px solid var(--border);">
-            <p>© 2026 Ajou University Software Engineering - Speech Recognition Challenge</p>
-        </footer>
+            <footer
+                style="text-align: center; padding-top: 40px; color: var(--text-muted); font-size: 0.9rem; border-top: 1px solid var(--border);">
+                <p>© 2026 Ajou University Software Engineering - Speech Recognition Challenge</p>
+            </footer>
 
     </div>
 </body>
