@@ -5,33 +5,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tactical Whisper - Speech Recognition Challenge 2026</title>
+    <!-- MathJax for rendering math formulas -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <style>
-        /* 기본 스타일 및 부드러운 스크롤 적용 */
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --secondary: #475569;
+            --bg-light: #f8fafc;
+            --surface: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+        }
+
         html {
             scroll-behavior: smooth;
         }
 
         body {
             font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
-            line-height: 1.6;
-            color: #333;
+            line-height: 1.7;
+            color: var(--text-main);
             margin: 0;
-            padding: 0;
-            background-color: #f9fafb;
+            background-color: var(--bg-light);
         }
 
-        /* 상단 고정 내비게이션 바 */
+        /* Navigation */
         header {
             position: sticky;
             top: 0;
-            background-color: #ffffff;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(5px);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
             z-index: 1000;
-            padding: 10px 0;
+            padding: 15px 0;
         }
 
         nav {
-            max-width: 1000px;
+            max-width: 1100px;
             margin: 0 auto;
             display: flex;
             justify-content: space-between;
@@ -40,9 +53,11 @@
         }
 
         nav h1 {
-            font-size: 1.2rem;
-            color: #2c3e50;
+            font-size: 1.4rem;
+            color: var(--primary-dark);
             margin: 0;
+            font-weight: 800;
+            letter-spacing: -0.5px;
         }
 
         nav ul {
@@ -50,234 +65,399 @@
             padding: 0;
             margin: 0;
             display: flex;
-            gap: 15px;
+            gap: 20px;
+            flex-wrap: wrap;
         }
 
         nav ul li a {
             text-decoration: none;
-            color: #555;
-            font-weight: 500;
+            color: var(--secondary);
+            font-weight: 600;
             font-size: 0.95rem;
-            transition: color 0.2s;
+            transition: 0.2s;
         }
 
         nav ul li a:hover {
-            color: #3498db;
+            color: var(--primary);
         }
 
-        /* 본문 컨테이너 및 섹션 스타일 */
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            padding: 80px 20px;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .hero h2 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: white;
+            border: none;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: #94a3b8;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        /* Container & Sections */
         .container {
             max-width: 1000px;
             margin: 0 auto;
-            padding: 40px 20px;
+            padding: 0 20px 60px 20px;
         }
 
         section {
-            background: #ffffff;
+            background: var(--surface);
             padding: 40px;
-            margin-bottom: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            scroll-margin-top: 80px;
+            margin-bottom: 40px;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            scroll-margin-top: 100px;
+            border: 1px solid var(--border);
         }
 
         h2 {
-            color: #2c3e50;
-            border-bottom: 2px solid #eef2f5;
-            padding-bottom: 10px;
-            margin-top: 0;
-            margin-bottom: 20px;
+            color: var(--text-main);
             font-size: 1.8rem;
+            margin-top: 0;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h2::before {
+            content: "";
+            display: inline-block;
+            width: 5px;
+            height: 28px;
+            background-color: var(--primary);
+            border-radius: 4px;
         }
 
         h3 {
-            color: #34495e;
-            font-size: 1.2rem;
+            color: var(--primary-dark);
+            font-size: 1.3rem;
+            margin-top: 30px;
         }
 
-        p {
-            margin-bottom: 15px;
-            color: #4b5563;
+        /* Lists & Badges */
+        ul {
+            padding-left: 20px;
+            color: var(--secondary);
         }
 
-        /* 테이블 스타일 (리더보드용) */
+        li {
+            margin-bottom: 10px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            background-color: #e0f2fe;
+            color: #0369a1;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-right: 8px;
+        }
+
+        /* Tech Stack Grid */
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .tech-card {
+            background: var(--bg-light);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+
+        /* Tables */
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
+            overflow: hidden;
+            border-radius: 8px;
         }
 
         th,
         td {
-            border: 1px solid #e5e7eb;
-            padding: 15px;
+            border: 1px solid var(--border);
+            padding: 16px;
             text-align: center;
         }
 
         th {
-            background-color: #f3f4f6;
-            font-weight: 600;
-            color: #374151;
+            background-color: #f1f5f9;
+            font-weight: 700;
+            color: var(--text-main);
         }
 
-        tr:nth-child(even) {
-            background-color: #f9fafb;
+        tr:hover {
+            background-color: #f8fafc;
         }
 
-        /* 코드 및 강조 블록 */
+        /* Audio Examples */
+        .example-box {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background: var(--bg-light);
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            margin-bottom: 20px;
+        }
+
+        .transcript-compare {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .transcript-item strong {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--primary-dark);
+        }
+
+        .error-text {
+            color: #ef4444;
+            font-weight: bold;
+            text-decoration: underline;
+        }
+
+        /* Code */
         code {
             background-color: #f1f5f9;
-            padding: 3px 6px;
-            border-radius: 4px;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
             font-size: 0.9em;
-            color: #e83e8c;
+            color: #db2777;
         }
 
-        .highlight-box {
-            background-color: #e0f2fe;
-            border-left: 4px solid #0284c7;
-            padding: 15px;
-            margin: 20px 0;
-            border-radius: 0 8px 8px 0;
-        }
-
-        /* 버튼 스타일 */
+        /* Buttons */
         .btn {
             display: inline-block;
-            padding: 12px 24px;
-            background-color: #24292e;
+            padding: 14px 28px;
+            background-color: #0f172a;
             color: white;
             text-decoration: none;
-            border-radius: 6px;
-            font-weight: bold;
-            transition: background-color 0.2s;
+            border-radius: 8px;
+            font-weight: 700;
+            transition: all 0.2s;
+            text-align: center;
         }
 
         .btn:hover {
-            background-color: #000000;
+            background-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
         }
     </style>
 </head>
 
 <body>
 
-    <!-- 상단 내비게이션 바 -->
     <header>
         <nav>
             <h1>Tactical Whisper</h1>
             <ul>
-                <li><a href="#overview">1. 개요</a></li>
-                <li><a href="#task">2. 과제 정의</a></li>
-                <li><a href="#dataset">3. 데이터셋</a></li>
-                <li><a href="#evaluation">4. 평가 방법</a></li>
-                <li><a href="#baseline">5. 베이스라인</a></li>
-                <li><a href="#leaderboard">6. 리더보드</a></li>
-                <li><a href="#github">7. 코드와 자료</a></li>
+                <li><a href="#overview">개요</a></li>
+                <li><a href="#task">과제 정의</a></li>
+                <li><a href="#dataset">데이터셋</a></li>
+                <li><a href="#evaluation">평가 방법</a></li>
+                <li><a href="#baseline">베이스라인</a></li>
+                <li><a href="#leaderboard">리더보드</a></li>
+                <li><a href="#examples">사례 (Examples)</a></li>
+                <li><a href="#resources">코드와 자료</a></li>
             </ul>
         </nav>
     </header>
 
+    <div class="hero">
+        <h2>Tactical Whisper Challenge 2026</h2>
+        <p>전장 소음(Tactical Noise) 및 주파수 대역 제한 환경에서도 높은 정확도를 보장하는 파라미터 효율적 음성 인식(ASR) 시스템 구축</p>
+    </div>
+
     <div class="container">
 
-        <!-- 1. 개요 -->
         <section id="overview">
-            <h2>1. 개요</h2>
-            <p><strong>Tactical Whisper:</strong> 전장 소음 및 대역폭 제한 환경에 강건한 음성 인식 모델 구축 프로젝트</p>
-            <p>본 프로젝트는 실제 작전 환경에서 발생하는 무전기 특유의 주파수 커팅 현상과 배경 소음 속에서도 높은 정확도를 유지할 수 있도록, 기존 사전 학습된 Whisper 모델을 파라미터 효율적
-                미세조정(PEFT/LoRA) 기법으로 최적화하는 것을 목표로 합니다.</p>
+            <h2>개요 (Overview)</h2>
+            <p>스튜디오에서 녹음된 깨끗한 음성과 달리, 실제 작전 환경의 무전 통신은 극심한 주파수 컷오프와 배경 노이즈(바람, 엔진 소리, 백색 소음 등)가 섞여 있어 기존 음성 인식 모델의 성능을
+                크게 저하시킵니다.</p>
+            <p>본 프로젝트는 대규모 언어 모델인 <code>openai/whisper-small</code>을 기반으로, <strong>LoRA (Low-Rank Adaptation)</strong>
+                기법을 활용하여 전장 통신 환경에 특화된 강건한(Robust) 모델을 적은 연산량으로 파인튜닝하는 파이프라인을 제안합니다.</p>
         </section>
 
-        <!-- 2. 과제 정의 -->
         <section id="task">
-            <h2>2. 과제 정의</h2>
-            <p>음성 인식(ASR) 시스템이 이상적인 스튜디오 환경을 넘어, 노이즈가 심한 통신 환경(Tactical Communication)에서도 작동하기 위해 해결해야 할 과제는 다음과 같습니다.
+            <h2>과제 정의 (Task)</h2>
+            <p>야전 환경을 시뮬레이션하기 위해 다음과 같은 물리적 신호 열화(Signal Degradation) 제약을 정의하고 이를 극복합니다.</p>
+            <div class="tech-grid">
+                <div class="tech-card">
+                    <span class="badge">제약 1</span>
+                    <h3>주파수 대역폭 제한 (Bandpass)</h3>
+                    <p>군용 무전기 및 협대역 통신의 특성을 반영하여 오디오 신호의 주파수를 <strong>300Hz ~ 2,500Hz</strong>로 강제 컷오프(Cut-off)합니다. 이로
+                        인해 마찰음(ㅅ, ㅆ, ㅍ) 등의 구분이 극도로 어려워집니다.</p>
+                </div>
+                <div class="tech-card">
+                    <span class="badge">제약 2</span>
+                    <h3>신호 대 잡음비 (SNR) 저하</h3>
+                    <p>Gaussian White Noise 및 야외 환경 소음을 합성하여 음성 신호의 <strong>SNR(Signal-to-Noise Ratio)을 -5dB에서 10dB
+                            사이</strong>로 무작위 변조합니다.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="dataset">
+            <h2>데이터셋 (Dataset)</h2>
+            <p>방대한 오디오 파일을 로컬에 저장하는 대신, <code>datasets</code> 라이브러리의 Lazy-loading 방식과 <code>audiomentations</code>를 결합한
+                <strong>온더플라이(On-the-fly) 데이터 증강 기법</strong>을 사용합니다.
             </p>
             <ul>
-                <li><strong>대역폭 제한 극복:</strong> 일반적인 음성 주파수 대역(0~8000Hz)이 아닌, 구형 무전기의 스펙인 <strong>300Hz ~
-                        2500Hz</strong>로 극단적으로 제한된 대역폭 내에서 언어적 특징을 추출해야 합니다.</li>
-                <li><strong>배경 소음 강건성 확보:</strong> 백색 소음(White Noise) 및 전장 환경 소음이 혼합된
-                    <code>Signal-to-Noise Ratio (SNR)</code>가 매우 낮은 오디오에서도 원활한 트랜스크립션이 수행되어야 합니다.</li>
+                <li><strong>원본 오디오:</strong> LibriSpeech (<code>train.100</code> 분량)</li>
+                <li><strong>Augmentation 파이프라인:</strong>
+                    <ul>
+                        <li><code>BandPassFilter(min_center_freq=300, max_center_freq=2500, p=1.0)</code></li>
+                        <li><code>AddBackgroundNoise(snr_in_db=Uniform(-5, 10), p=0.8)</code></li>
+                    </ul>
+                </li>
             </ul>
         </section>
 
-        <!-- 3. 데이터셋 -->
-        <section id="dataset">
-            <h2>3. 데이터셋</h2>
-            <p>모델 학습 및 평가를 위해 <strong>LibriSpeech</strong> 데이터셋을 기반으로 동적 전장 소음 합성 파이프라인을 구축했습니다.</p>
-            <div class="highlight-box">
-                <strong>동적 열화(On-the-fly Degradation) 파이프라인</strong><br>
-                용량이 큰 노이즈 데이터를 로컬에 직접 저장하지 않고, Hugging Face <code>datasets</code>의 <code>.map()</code> 함수와
-                <code>audiomentations</code> 라이브러리를 활용해 학습 배치 로딩 시 실시간으로 주파수 대역 제한 및 노이즈 믹스업을 적용합니다.
-            </div>
-            <ul>
-                <li><strong>Train Dataset:</strong> LibriSpeech <code>train.100</code> (에폭당 무작위 노이즈 비율 적용)</li>
-                <li><strong>Evaluation Dataset:</strong> LibriSpeech <code>test-clean</code> 원본에 고정된 시드(Fixed Seed)로 무전
-                    통신 필터를 씌워 구축</li>
-            </ul>
-        </section>
-
-        <!-- 4. 평가 방법 -->
         <section id="evaluation">
-            <h2>4. 평가 방법</h2>
-            <p>모델의 트랜스크립션 정확도를 측정하기 위해 <strong>WER (Word Error Rate, 단어 오류율)</strong> 지표를 사용합니다.</p>
-            <p>WER은 모델이 생성한 텍스트와 실제 정답 텍스트(Reference) 간의 일치 정도를 삽입(Insertion), 삭제(Deletion), 대체(Substitution) 오류 횟수를
-                기반으로 계산합니다. 수치가 <strong>낮을수록</strong> 모델의 성능이 뛰어남을 의미합니다.</p>
+            <h2>평가 방법 (Evaluation)</h2>
+            <p>음성 인식 모델의 표준 평가 지표인 <strong>WER (Word Error Rate, 단어 오류율)</strong>을 사용하여 평가합니다. WER 수치가 낮을수록 모델의 정확도가 높음을
+                의미합니다.</p>
+
+            <div
+                style="background: white; padding: 20px; border-radius: 8px; border: 1px solid var(--border); margin-top: 15px; text-align: center; overflow-x: auto;">
+                $$ WER = \frac{S + D + I}{N} \times 100 $$
+            </div>
+            <ul style="margin-top: 15px;">
+                <li>\( S \) (Substitution): 다른 단어로 잘못 인식한 횟수</li>
+                <li>\( D \) (Deletion): 단어를 인식하지 못하고 누락한 횟수</li>
+                <li>\( I \) (Insertion): 없는 단어를 추가로 인식한 횟수</li>
+                <li>\( N \): 실제 정답(Reference) 문장의 총 단어 수</li>
+            </ul>
         </section>
 
-        <!-- 5. 베이스라인 -->
         <section id="baseline">
-            <h2>5. 베이스라인</h2>
-            <p>본 프로젝트의 기준점(Baseline)이 되는 모델은 <code>openai/whisper-small</code> 입니다.</p>
-            <p>이 모델에 추가적인 학습(Fine-tuning)을 진행하지 않은 상태(Zero-shot)에서 전장 소음 평가 데이터셋을 통과시켰을 때 측정되는 WER 수치를 기준으로 삼으며, 파인튜닝된
-                최종 모델이 이 수치를 얼마나 감소시켰는지 비교합니다.</p>
+            <h2>베이스라인 (Baseline)</h2>
+            <p>파인튜닝의 효과를 입증하기 위한 비교군은 어떠한 노이즈 학습도 거치지 않은 사전 학습 모델입니다.</p>
+            <ul>
+                <li><strong>모델:</strong> <code>openai/whisper-small</code></li>
+                <li><strong>환경:</strong> Zero-shot Inference (전장 노이즈 데이터셋 테스트)</li>
+                <li><strong>한계점:</strong> 노이즈를 사람의 목소리로 착각하여 할루시네이션(Hallucination)을 발생시키거나, 잘린 주파수로 인해 특정 자음을 완전히 다르게
+                    인식하는 현상이 관찰됩니다.</li>
+            </ul>
         </section>
 
-        <!-- 6. 리더보드 -->
         <section id="leaderboard">
-            <h2>6. 리더보드</h2>
-            <p>베이스라인과 제안하는 방법론(Tactical LoRA)의 성능 비교 결과입니다.</p>
+            <h2>리더보드 (Leaderboard)</h2>
             <table>
                 <thead>
                     <tr>
-                        <th>순위</th>
-                        <th>Model & Approach</th>
-                        <th>파라미터 업데이트 방식</th>
-                        <th>WER (%)</th>
+                        <th>Rank</th>
+                        <th>Model Name</th>
+                        <th>Approach / Architecture</th>
+                        <th>WER (%) ▼</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td>1</td>
+                        <td><span style="font-size: 1.2rem;">🥇</span></td>
                         <td><strong>Tactical Whisper (Ours)</strong></td>
-                        <td>LoRA (q_proj, v_proj 튜닝)</td>
-                        <td>TBD (평가 중)</td>
+                        <td>LoRA Fine-tuning (Attention <code>q_proj</code>, <code>v_proj</code>)</td>
+                        <td><strong>TBD (학습 진행 중)</strong></td>
                     </tr>
                     <tr>
                         <td>2</td>
-                        <td>Whisper Small (Baseline)</td>
-                        <td>Zero-shot Inference</td>
-                        <td>TBD (평가 중)</td>
+                        <td>Whisper Small</td>
+                        <td>Zero-shot Baseline</td>
+                        <td>TBD</td>
                     </tr>
                 </tbody>
             </table>
         </section>
 
-        <!-- 7. 코드와 자료 (개인 GitHub) -->
-        <section id="github">
-            <h2>7. 코드와 자료 (개인 GitHub 저장소)</h2>
-            <p>표준 MLOps 디렉토리 구조(src, configs, checkpoints, notebooks)로 관리되는 전체 코드베이스와 재현 가능한 학습 파이프라인은 아래 GitHub 저장소에
-                업로드되어 있습니다.</p>
-            <p>
-                <a href="https://github.com/본인아이디/Speech-Challenge-2026" class="btn" target="_blank">GitHub Repository로
-                    이동</a>
-            </p>
-            <ul>
-                <li><code>src/train.py</code> : 메인 학습 루프 및 LoRA 어댑터 주입 로직</li>
-                <li><code>src/preprocess.py</code> : 전장 소음 시뮬레이션 및 데이터 전처리 유닛</li>
-                <li><code>src/eval_metrics.py</code> : WER 평가 및 체크포인트 성능 검증 로직</li>
-                <li><code>configs/default_config.yaml</code> : 재현성을 위한 하이퍼파라미터 관리</li>
-            </ul>
+        <section id="examples">
+            <h2>사례 (Examples)</h2>
+            <p>동일한 대화 스크립트가 전장 환경에서 어떻게 변형되며, 제안하는 모델이 이를 어떻게 극복하는지 보여주는 샘플입니다.</p>
+
+            <div class="example-box">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h3 style="margin: 0;">Sample 1. 극단적 대역폭 제한 및 노이즈</h3>
+                    <span class="badge">SNR: -2dB</span>
+                </div>
+
+                <div>
+                    <strong>전장 합성 오디오 (Tactical Degraded)</strong><br>
+                    <audio controls style="width: 100%; margin-top: 10px;">
+                        <!-- 실제 오디오 파일 경로로 수정 필요 -->
+                        <source src="tactical_sample_01.wav" type="audio/wav">
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
+
+                <div class="transcript-compare">
+                    <div class="transcript-item">
+                        <strong>Ground Truth (정답)</strong>
+                        <p>the tactical situation requires immediate evacuation of sector seven.</p>
+                    </div>
+                    <div class="transcript-item">
+                        <strong>Baseline (Zero-shot) 예측</strong>
+                        <p>the <span class="error-text">practical</span> situation requires <span
+                                class="error-text">[SILENCE]</span> evacuation of sector <span
+                                class="error-text">eleven</span>.</p>
+                    </div>
+                </div>
+                <div class="transcript-compare"
+                    style="grid-template-columns: 1fr; background: #f0fdf4; border: 1px solid #bbf7d0;">
+                    <div class="transcript-item">
+                        <strong style="color: #166534;">Tactical Whisper (Ours) 예측</strong>
+                        <p>the tactical situation requires immediate evacuation of sector seven.</p>
+                    </div>
+                </div>
+            </div>
         </section>
+
+        <section id="resources">
+            <h2>코드와 자료 (Resources)</h2>
+            <p>본 프로젝트는 <strong>Google Colab T4 GPU</strong> 환경에서 PyTorch 및 Hugging Face 생태계(Transformers, PEFT)를 기반으로
+                작성되었습니다. 모든 코드는 MLOps 구조에 맞게 모듈화되어 아래 저장소에 공개되어 있습니다.</p>
+
+            <div style="text-align: center; margin-top: 30px;">
+                <a href="https://github.com/jyj-08/Speech-Challenge-2026" class="btn" target="_blank">
+                    <svg style="width: 20px; height: 20px; vertical-align: middle; margin-right: 8px; fill: currentColor;"
+                        viewBox="0 0 24 24">
+                        <path
+                            d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+                    </svg>
+                    개인 GitHub 저장소 방문
+                </a>
+            </div>
+        </section>
+
+        <footer
+            style="text-align: center; padding-top: 40px; color: var(--text-muted); font-size: 0.9rem; border-top: 1px solid var(--border);">
+            <p>© 2026 Ajou University Software Engineering - Speech Recognition Challenge</p>
+        </footer>
 
     </div>
 </body>
