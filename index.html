@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tactical Whisper - Speech Recognition Challenge 2026</title>
+    <style>
+        /* 기본 스타일 및 부드러운 스크롤 적용 */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            background-color: #f9fafb;
+        }
+
+        /* 상단 고정 내비게이션 바 */
+        header {
+            position: sticky;
+            top: 0;
+            background-color: #ffffff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            padding: 10px 0;
+        }
+
+        nav {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        nav h1 {
+            font-size: 1.2rem;
+            color: #2c3e50;
+            margin: 0;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            gap: 15px;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: #555;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+        }
+
+        nav ul li a:hover {
+            color: #3498db;
+        }
+
+        /* 본문 컨테이너 및 섹션 스타일 */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        section {
+            background: #ffffff;
+            padding: 40px;
+            margin-bottom: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            scroll-margin-top: 80px;
+        }
+
+        h2 {
+            color: #2c3e50;
+            border-bottom: 2px solid #eef2f5;
+            padding-bottom: 10px;
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+
+        h3 {
+            color: #34495e;
+            font-size: 1.2rem;
+        }
+
+        p {
+            margin-bottom: 15px;
+            color: #4b5563;
+        }
+
+        /* 테이블 스타일 (리더보드용) */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            border: 1px solid #e5e7eb;
+            padding: 15px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f3f4f6;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9fafb;
+        }
+
+        /* 코드 및 강조 블록 */
+        code {
+            background-color: #f1f5f9;
+            padding: 3px 6px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            color: #e83e8c;
+        }
+
+        .highlight-box {
+            background-color: #e0f2fe;
+            border-left: 4px solid #0284c7;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        /* 버튼 스타일 */
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: #24292e;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+
+        .btn:hover {
+            background-color: #000000;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- 상단 내비게이션 바 -->
+    <header>
+        <nav>
+            <h1>Tactical Whisper</h1>
+            <ul>
+                <li><a href="#overview">1. 개요</a></li>
+                <li><a href="#task">2. 과제 정의</a></li>
+                <li><a href="#dataset">3. 데이터셋</a></li>
+                <li><a href="#evaluation">4. 평가 방법</a></li>
+                <li><a href="#baseline">5. 베이스라인</a></li>
+                <li><a href="#leaderboard">6. 리더보드</a></li>
+                <li><a href="#github">7. 코드와 자료</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+
+        <!-- 1. 개요 -->
+        <section id="overview">
+            <h2>1. 개요</h2>
+            <p><strong>Tactical Whisper:</strong> 전장 소음 및 대역폭 제한 환경에 강건한 음성 인식 모델 구축 프로젝트</p>
+            <p>본 프로젝트는 실제 작전 환경에서 발생하는 무전기 특유의 주파수 커팅 현상과 배경 소음 속에서도 높은 정확도를 유지할 수 있도록, 기존 사전 학습된 Whisper 모델을 파라미터 효율적
+                미세조정(PEFT/LoRA) 기법으로 최적화하는 것을 목표로 합니다.</p>
+        </section>
+
+        <!-- 2. 과제 정의 -->
+        <section id="task">
+            <h2>2. 과제 정의</h2>
+            <p>음성 인식(ASR) 시스템이 이상적인 스튜디오 환경을 넘어, 노이즈가 심한 통신 환경(Tactical Communication)에서도 작동하기 위해 해결해야 할 과제는 다음과 같습니다.
+            </p>
+            <ul>
+                <li><strong>대역폭 제한 극복:</strong> 일반적인 음성 주파수 대역(0~8000Hz)이 아닌, 구형 무전기의 스펙인 <strong>300Hz ~
+                        2500Hz</strong>로 극단적으로 제한된 대역폭 내에서 언어적 특징을 추출해야 합니다.</li>
+                <li><strong>배경 소음 강건성 확보:</strong> 백색 소음(White Noise) 및 전장 환경 소음이 혼합된
+                    <code>Signal-to-Noise Ratio (SNR)</code>가 매우 낮은 오디오에서도 원활한 트랜스크립션이 수행되어야 합니다.</li>
+            </ul>
+        </section>
+
+        <!-- 3. 데이터셋 -->
+        <section id="dataset">
+            <h2>3. 데이터셋</h2>
+            <p>모델 학습 및 평가를 위해 <strong>LibriSpeech</strong> 데이터셋을 기반으로 동적 전장 소음 합성 파이프라인을 구축했습니다.</p>
+            <div class="highlight-box">
+                <strong>동적 열화(On-the-fly Degradation) 파이프라인</strong><br>
+                용량이 큰 노이즈 데이터를 로컬에 직접 저장하지 않고, Hugging Face <code>datasets</code>의 <code>.map()</code> 함수와
+                <code>audiomentations</code> 라이브러리를 활용해 학습 배치 로딩 시 실시간으로 주파수 대역 제한 및 노이즈 믹스업을 적용합니다.
+            </div>
+            <ul>
+                <li><strong>Train Dataset:</strong> LibriSpeech <code>train.100</code> (에폭당 무작위 노이즈 비율 적용)</li>
+                <li><strong>Evaluation Dataset:</strong> LibriSpeech <code>test-clean</code> 원본에 고정된 시드(Fixed Seed)로 무전
+                    통신 필터를 씌워 구축</li>
+            </ul>
+        </section>
+
+        <!-- 4. 평가 방법 -->
+        <section id="evaluation">
+            <h2>4. 평가 방법</h2>
+            <p>모델의 트랜스크립션 정확도를 측정하기 위해 <strong>WER (Word Error Rate, 단어 오류율)</strong> 지표를 사용합니다.</p>
+            <p>WER은 모델이 생성한 텍스트와 실제 정답 텍스트(Reference) 간의 일치 정도를 삽입(Insertion), 삭제(Deletion), 대체(Substitution) 오류 횟수를
+                기반으로 계산합니다. 수치가 <strong>낮을수록</strong> 모델의 성능이 뛰어남을 의미합니다.</p>
+        </section>
+
+        <!-- 5. 베이스라인 -->
+        <section id="baseline">
+            <h2>5. 베이스라인</h2>
+            <p>본 프로젝트의 기준점(Baseline)이 되는 모델은 <code>openai/whisper-small</code> 입니다.</p>
+            <p>이 모델에 추가적인 학습(Fine-tuning)을 진행하지 않은 상태(Zero-shot)에서 전장 소음 평가 데이터셋을 통과시켰을 때 측정되는 WER 수치를 기준으로 삼으며, 파인튜닝된
+                최종 모델이 이 수치를 얼마나 감소시켰는지 비교합니다.</p>
+        </section>
+
+        <!-- 6. 리더보드 -->
+        <section id="leaderboard">
+            <h2>6. 리더보드</h2>
+            <p>베이스라인과 제안하는 방법론(Tactical LoRA)의 성능 비교 결과입니다.</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>순위</th>
+                        <th>Model & Approach</th>
+                        <th>파라미터 업데이트 방식</th>
+                        <th>WER (%)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td><strong>Tactical Whisper (Ours)</strong></td>
+                        <td>LoRA (q_proj, v_proj 튜닝)</td>
+                        <td>TBD (평가 중)</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Whisper Small (Baseline)</td>
+                        <td>Zero-shot Inference</td>
+                        <td>TBD (평가 중)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- 7. 코드와 자료 (개인 GitHub) -->
+        <section id="github">
+            <h2>7. 코드와 자료 (개인 GitHub 저장소)</h2>
+            <p>표준 MLOps 디렉토리 구조(src, configs, checkpoints, notebooks)로 관리되는 전체 코드베이스와 재현 가능한 학습 파이프라인은 아래 GitHub 저장소에
+                업로드되어 있습니다.</p>
+            <p>
+                <a href="https://github.com/본인아이디/Speech-Challenge-2026" class="btn" target="_blank">GitHub Repository로
+                    이동</a>
+            </p>
+            <ul>
+                <li><code>src/train.py</code> : 메인 학습 루프 및 LoRA 어댑터 주입 로직</li>
+                <li><code>src/preprocess.py</code> : 전장 소음 시뮬레이션 및 데이터 전처리 유닛</li>
+                <li><code>src/eval_metrics.py</code> : WER 평가 및 체크포인트 성능 검증 로직</li>
+                <li><code>configs/default_config.yaml</code> : 재현성을 위한 하이퍼파라미터 관리</li>
+            </ul>
+        </section>
+
+    </div>
+</body>
+
+</html>
