@@ -23,3 +23,12 @@ matplotlib
 # Configuration & Testing
 pyyaml
 pytest
+
+torch
+torchaudio
+audiomentations
+datasets
+transformers
+evaluate
+torchcodec
+soundfile

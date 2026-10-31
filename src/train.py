@@ -1,13 +1,13 @@
 """Main training and evaluation pipeline for tactical speech recognition.
 
 Integrates data loading, degradation, preprocessing, LoRA modeling, and training.
-Supports YAML configuration and reproducible experiment tracking.
+Supports YAML configuration, reproducible experiment tracking, and fast dry-runs via max_steps.
 """
 
 import argparse
 import os
 import sys
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 # Ensure project root is in sys.path when running script directly
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -75,6 +75,7 @@ def train_whisper(
     batch_size: int = 4,
     learning_rate: float = 1e-3,
     num_train_epochs: int = 2,
+    max_steps: int = -1,
     logging_steps: int = 5,
     fp16: Optional[bool] = None,
     logger: Optional[Any] = None,
@@ -94,6 +95,7 @@ def train_whisper(
         per_device_train_batch_size=batch_size,
         learning_rate=learning_rate,
         num_train_epochs=num_train_epochs,
+        max_steps=max_steps,
         logging_steps=logging_steps,
         remove_unused_columns=False,
         label_names=["labels"],
@@ -108,7 +110,8 @@ def train_whisper(
         data_collator=data_collator,
     )
 
-    log(f"Starting model training (Epochs: {num_train_epochs}, Batch Size: {batch_size})...")
+    step_info = f"Max Steps: {max_steps}" if max_steps > 0 else f"Epochs: {num_train_epochs}"
+    log(f"Starting model training ({step_info}, Batch Size: {batch_size})...")
     trainer.train()
     log("Model fine-tuning finished successfully!")
     return trainer
@@ -117,10 +120,12 @@ def train_whisper(
 def run_pipeline(
     model_id: str = "openai/whisper-small",
     dataset_name: str = "openslr/librispeech_asr",
-    subset: str = "clean",
-    split: str = "validation[:50]",
+    subset: Optional[str] = "clean",
+    split: Optional[str] = "validation[:50]",
+    data_files: Optional[Union[str, List[str]]] = None,
     output_dir: str = "./checkpoints/tactical_whisper",
     epochs: int = 2,
+    max_steps: int = -1,
     batch_size: int = 4,
     learning_rate: float = 1e-3,
     seed: int = 42,
@@ -145,8 +150,13 @@ def run_pipeline(
     device = get_default_device()
     logger.info(f"Executing pipeline on device: {device}")
 
-    # 1. Download and load raw clean dataset
-    raw_dataset = load_speech_dataset(dataset_name=dataset_name, subset=subset, split=split)
+    # 1. Download and load raw clean dataset (Hub or local files)
+    raw_dataset = load_speech_dataset(
+        dataset_name=dataset_name,
+        subset=subset,
+        split=split,
+        data_files=data_files,
+    )
 
     # 2. Apply tactical battlefield degradation (narrowband radio + Gaussian noise)
     degrader = TacticalAudioDegrader(min_snr_db=-5.0, max_snr_db=0.0, central_freq=1400.0, q=0.707)
@@ -200,6 +210,7 @@ def run_pipeline(
         batch_size=batch_size,
         learning_rate=learning_rate,
         num_train_epochs=epochs,
+        max_steps=max_steps,
         logger=logger,
     )
 
@@ -265,6 +276,12 @@ def parse_args() -> argparse.Namespace:
         help="Dataset split (default: validation[:50])",
     )
     parser.add_argument(
+        "--data_files",
+        type=str,
+        default=None,
+        help="Path to local data files (e.g. data/raw/*.parquet)",
+    )
+    parser.add_argument(
         "--output_dir",
         type=str,
         default=None,
@@ -275,6 +292,12 @@ def parse_args() -> argparse.Namespace:
         type=int,
         default=None,
         help="Number of training epochs (default: 2)",
+    )
+    parser.add_argument(
+        "--max_steps",
+        type=int,
+        default=None,
+        help="Total number of training steps (overrides epochs if > 0, useful for dry-run)",
     )
     parser.add_argument(
         "--batch_size",
@@ -324,8 +347,10 @@ if __name__ == "__main__":
     dataset_name = cli_args.dataset_name or dataset_cfg.get("name", "openslr/librispeech_asr")
     subset = cli_args.subset or dataset_cfg.get("subset", "clean")
     split = cli_args.split or dataset_cfg.get("train_split", "validation[:50]")
+    data_files = cli_args.data_files or dataset_cfg.get("data_files", None)
     output_dir = cli_args.output_dir or train_cfg.get("output_dir", "./checkpoints/tactical_whisper")
     epochs = cli_args.epochs or train_cfg.get("num_train_epochs", 2)
+    max_steps = cli_args.max_steps if cli_args.max_steps is not None else train_cfg.get("max_steps", -1)
     batch_size = cli_args.batch_size or train_cfg.get("per_device_train_batch_size", 4)
     learning_rate = cli_args.learning_rate or train_cfg.get("learning_rate", 1e-3)
     seed = cli_args.seed or exp_cfg.get("seed", 42)
@@ -340,8 +365,10 @@ if __name__ == "__main__":
         dataset_name=dataset_name,
         subset=subset,
         split=split,
+        data_files=data_files,
         output_dir=output_dir,
         epochs=epochs,
+        max_steps=max_steps,
         batch_size=batch_size,
         learning_rate=learning_rate,
         seed=seed,

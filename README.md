@@ -15,8 +15,9 @@ Speech-Challenge-2026/
 │
 ├── checkpoints/                # 모델 가중치 및 학습 체크포인트 (.gitignore 대상)
 │
-├── notebooks/                  # 탐색 및 분석용 인터랙티브 노트북
-│   └── exploration.ipynb       # EDA, 오디오 재생/시각화, 샘플 추론 비교
+├── notebooks/                  # 탐색 및 코랩 실행용 노트북
+│   ├── exploration.ipynb       # EDA, 오디오 재생/시각화, 샘플 추론 비교
+│   └── run_on_colab.ipynb      # 구글 코랩(Colab) 원클릭 학습/평가 실행 템플릿
 │
 ├── src/                        # 핵심 머신러닝 모듈
 │   ├── __init__.py
@@ -91,3 +92,12 @@ pytest tests/ -v
 * 구형 무전기 필터링 및 노이즈 합성 오디오 비교 (Waveform & Spectrogram)
 * Whisper Zero-shot 예측 vs 정답 레이블 텍스트 비교
 * LoRA 학습 파라미터 구조 확인
+
+### 5. 구글 코랩(Colab) 원클릭 실행 (`notebooks/run_on_colab.ipynb`)
+Google Colab 환경에서 GPU 가속기를 활용하여 손쉽게 학습 파이프라인을 구동할 수 있습니다:
+1. Google Drive 마운트
+2. GitHub 리포지토리 자동 복제 (`git clone`) 및 경로 이동
+3. 의존성 패키지 일괄 설치 (`pip install -r requirements.txt`)
+4. 드라이브 내 `.parquet` 데이터셋 `data/raw/` 복사
+5. 드라이 런(`--max_steps 5`)으로 사전 파이프라인 점검
+6. 본 학습 및 구글 드라이브로 체크포인트 자동 영구 백업
