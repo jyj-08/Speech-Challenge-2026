@@ -10,6 +10,16 @@ import os
 import sys
 from typing import Any, Dict, List, Optional, Tuple
 
+def load_model_for_eval(base_model_id, checkpoint_dir):
+    # 상위 디렉토리(tactical_whisper)가 주어졌을 때 내부의 checkpoint 폴더 자동 스캔
+    if os.path.exists(checkpoint_dir):
+        subdirs = [os.path.join(checkpoint_dir, d) for d in os.listdir(checkpoint_dir) 
+                   if d.startswith("checkpoint-") and os.path.isdir(os.path.join(checkpoint_dir, d))]
+        if subdirs:
+            # 파일 생성 시간을 기준으로 가장 최신 폴더 선택
+            checkpoint_dir = max(subdirs, key=os.path.getmtime)
+            print(f"[INFO] 최신 LoRA 체크포인트 경로 자동 감지: {checkpoint_dir}")
+
 # Ensure project root is in sys.path
 current_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.dirname(current_dir)
