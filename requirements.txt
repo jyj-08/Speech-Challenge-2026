@@ -24,11 +24,5 @@ matplotlib
 pyyaml
 pytest
 
-torch
-torchaudio
-audiomentations
-datasets
-transformers
-evaluate
+# Codec (optional, for advanced audio decoding)
 torchcodec
-soundfile
