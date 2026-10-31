@@ -25,7 +25,7 @@ Speech-Challenge-2026/
 │   ├── preprocess.py           # 무전 대역폭/노이즈 열화 증강, Whisper 특징 추출 & DataCollator
 │   ├── model.py                # Whisper 모델 로드 및 LoRA(PEFT) 설정
 │   ├── train.py                # 엔드투엔드 학습/평가 파이프라인 및 Config 연동 메인 진입점
-│   ├── evaluate.py             # 독립 평가 스크립트 (WER, CER 지표 산출 및 리포트 저장)
+│   ├── eval_metrics.py         # 독립 평가 스크립트 (WER, CER 지표 산출 및 리포트 저장)
 │   └── utils.py                # 재현성을 위한 시드 고정, 로깅 설정, YAML 파서
 │
 ├── tests/                      # 단위 테스트 (Unit Tests)
@@ -65,15 +65,15 @@ python src/train.py --config configs/default_config.yaml
 python src/train.py --epochs 3 --batch_size 4 --learning_rate 0.0005 --output_dir checkpoints/exp_01
 ```
 
-### 2. 학습 완료 모델 평가 (`evaluate.py`)
+### 2. 학습 완료 모델 평가 (`eval_metrics.py`)
 학습된 LoRA 체크포인트 또는 사전학습 모델에 대해 테스트 데이터셋에서 WER 및 CER 지표를 독립적으로 평가하고 결과를 저장할 수 있습니다.
 
 ```bash
 # 기본 사전학습 모델의 전장 열화 환경 평가
-python src/evaluate.py --model_id openai/whisper-small
+python src/eval_metrics.py --model_id openai/whisper-small
 
 # 학습된 LoRA 체크포인트 평가 및 결과 JSON 저장
-python src/evaluate.py \
+python src/eval_metrics.py \
     --checkpoint_dir checkpoints/tactical_whisper \
     --metrics wer cer \
     --output_file checkpoints/eval_results.json

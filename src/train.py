@@ -14,57 +14,16 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.dirname(current_dir)
 if parent_dir not in sys.path:
     sys.path.insert(0, parent_dir)
+if current_dir not in sys.path:
+    sys.path.insert(0, current_dir)
 
 from src.utils import load_yaml_config, set_seed, setup_logger
 
-
-def evaluate_wer(
-    model: Any,
-    processor: Any,
-    dataset: Any,
-    device: Optional[Any] = None,
-    metric_name: str = "wer",
-    desc: str = "Inference & Evaluation",
-    logger: Optional[Any] = None,
-) -> Tuple[float, List[str], List[str]]:
-    """Evaluate Speech-to-Text model on dataset using Word Error Rate (WER)."""
-    import evaluate
-    import torch
-    from tqdm.auto import tqdm
-    from src.model import get_default_device
-
-    if device is None:
-        device = get_default_device()
-
-    log = logger.info if logger else print
-
-    log(f"Loading evaluation metric: {metric_name}...")
-    wer_metric = evaluate.load(metric_name)
-
-    model.eval()
-    predictions: List[str] = []
-    references: List[str] = []
-
-    log(f"Starting inference on {len(dataset)} samples ({desc})...")
-    for i in tqdm(range(len(dataset)), desc=desc):
-        sample = dataset[i]
-        audio = sample["audio"]
-        ground_truth = sample["text"]
-
-        inputs = processor(
-            audio["array"], sampling_rate=audio["sampling_rate"], return_tensors="pt"
-        )
-        input_features = inputs.input_features.to(device)
-
-        with torch.no_grad():
-            predicted_ids = model.generate(input_features)
-
-        transcription = processor.batch_decode(predicted_ids, skip_special_tokens=True)[0]
-        predictions.append(transcription.strip().upper())
-        references.append(ground_truth.strip().upper())
-
-    wer_score = wer_metric.compute(predictions=predictions, references=references)
-    return float(wer_score), predictions, references
+# Import evaluation logic from eval_metrics module (avoids shadowing official Hugging Face evaluate)
+try:
+    from src.eval_metrics import evaluate_wer
+except ImportError:
+    from eval_metrics import evaluate_wer
 
 
 def train_whisper(

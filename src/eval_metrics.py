@@ -1,4 +1,4 @@
-"""Standalone evaluation module for tactical speech recognition.
+"""Evaluation metrics and inference pipeline for tactical speech recognition.
 
 Computes Word Error Rate (WER) and Character Error Rate (CER) on test/validation datasets
 for base Whisper models or fine-tuned LoRA checkpoints.
@@ -49,6 +49,55 @@ def compute_wer_cer(
             print(f"[Warning] Failed to compute metric '{metric_name}': {e}")
 
     return results
+
+
+def evaluate_wer(
+    model: Any,
+    processor: Any,
+    dataset: Any,
+    device: Optional[Any] = None,
+    metric_name: str = "wer",
+    desc: str = "Inference & Evaluation",
+    logger: Optional[Any] = None,
+) -> Tuple[float, List[str], List[str]]:
+    """Evaluate Speech-to-Text model on dataset using Word Error Rate (WER)."""
+    import evaluate
+    import torch
+    from tqdm.auto import tqdm
+    from src.model import get_default_device
+
+    if device is None:
+        device = get_default_device()
+
+    log = logger.info if logger else print
+
+    log(f"Loading evaluation metric: {metric_name}...")
+    wer_metric = evaluate.load(metric_name)
+
+    model.eval()
+    predictions: List[str] = []
+    references: List[str] = []
+
+    log(f"Starting inference on {len(dataset)} samples ({desc})...")
+    for i in tqdm(range(len(dataset)), desc=desc):
+        sample = dataset[i]
+        audio = sample["audio"]
+        ground_truth = sample["text"]
+
+        inputs = processor(
+            audio["array"], sampling_rate=audio["sampling_rate"], return_tensors="pt"
+        )
+        input_features = inputs.input_features.to(device)
+
+        with torch.no_grad():
+            predicted_ids = model.generate(input_features)
+
+        transcription = processor.batch_decode(predicted_ids, skip_special_tokens=True)[0]
+        predictions.append(transcription.strip().upper())
+        references.append(ground_truth.strip().upper())
+
+    wer_score = wer_metric.compute(predictions=predictions, references=references)
+    return float(wer_score), predictions, references
 
 
 def run_evaluation(
@@ -201,3 +250,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+
