@@ -455,41 +455,75 @@
         </table>
         </section>
         <section id="examples">
-            <h2>Examples</h2>
-            <p>동일한 대화 스크립트가 전장 환경에서 어떻게 변형되며, 제안하는 모델이 이를 어떻게 극복하는지 보여주는 샘플입니다.</p>
+            <h2>사례 (Real Extracted Examples)</h2>
+            <p>실제 <code>extract_sample.py</code>를 통해 추출된 LibriSpeech 검증 데이터셋의 추론 결과입니다. 전장 환경(대역폭 제한 및 노이즈 합성)에서
+                Baseline과 파인튜닝 모델의 인식 차이를 보여줍니다.</p>
 
+            <!-- Sample 1 -->
             <div class="example-box">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <h3 style="margin: 0;">Sample 1. 극단적 대역폭 제한 및 노이즈</h3>
-                    <span class="badge">SNR: -2dB</span>
-                </div>
-
-                <div>
-                    <strong>전장 합성 오디오 (Tactical Degraded)</strong><br>
-                    <audio controls style="width: 100%; margin-top: 10px;">
-                        <!-- 실제 오디오 파일 경로로 수정 필요 -->
-                        <source src="tactical_sample_01.wav" type="audio/wav">
-                        Your browser does not support the audio element.
-                    </audio>
+                    <h3 style="margin: 0;">Sample 1. 노이즈로 인한 할루시네이션(환각) 방어</h3>
+                    <span class="badge">LibriSpeech Sample #0</span>
                 </div>
 
                 <div class="transcript-compare">
                     <div class="transcript-item">
                         <strong>Ground Truth (정답)</strong>
-                        <p>the tactical situation requires immediate evacuation of sector seven.</p>
+                        <p>HE WAS IN A FEVERED STATE OF MIND OWING TO THE BLIGHT HIS WIFE'S ACTION THREATENED TO CAST
+                            UPON HIS ENTIRE FUTURE</p>
                     </div>
                     <div class="transcript-item">
                         <strong>Baseline (Zero-shot) 예측</strong>
-                        <p>the <span class="error-text">practical</span> situation requires <span
-                                class="error-text">[SILENCE]</span> evacuation of sector <span
-                                class="error-text">eleven</span>.</p>
+                        <p><span class="error-text">SHE</span> WAS IN A <span class="error-text">FEVER</span> STATE OF
+                            MIND, <span class="error-text">YELLING</span> TO THE <span class="error-text">BLYTHE AND
+                                BLYTHE ACCIDENT THREAT TO CASTLEMONT AND THE OHIO PEOPLE.</span></p>
+                        <span style="font-size: 0.85rem; color: #64748b;">* 노이즈를 사람 목소리로 착각하여 아예 없는 문장을 창조해냄</span>
                     </div>
                 </div>
                 <div class="transcript-compare"
                     style="grid-template-columns: 1fr; background: #f0fdf4; border: 1px solid #bbf7d0;">
                     <div class="transcript-item">
-                        <strong style="color: #166534;">Tactical Whisper (Ours) 예측</strong>
-                        <p>the tactical situation requires immediate evacuation of sector seven.</p>
+                        <strong style="color: #166534;">Tactical Whisper (LoRA r=8) 예측</strong>
+                        <p>HE WAS IN A FEVER STATE OF MIND OWING TO THE BLIGHT HIS WIFE'S ACTION THREATED HIS HATS OF
+                            HOT IN THE FIRE SEAVER</p>
+                        <span style="font-size: 0.85rem; color: #166534;">* 후반부에 약간의 오류(CER)는 있으나, 문장의 전체적인 문맥과 단어를 정확하게
+                            보존함</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sample 2 -->
+            <div class="example-box">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h3 style="margin: 0;">Sample 2. 단어 왜곡 및 누락 복구</h3>
+                    <span class="badge">LibriSpeech Sample #1</span>
+                </div>
+
+                <div class="transcript-compare">
+                    <div class="transcript-item">
+                        <strong>Ground Truth (정답)</strong>
+                        <p>HE WOULD HAVE TO PAY HER THE MONEY WHICH SHE WOULD NOW REGULARLY DEMAND OR THERE WOULD BE
+                            TROUBLE IT DID NOT MATTER WHAT HE DID</p>
+                    </div>
+                    <div class="transcript-item">
+                        <strong>Baseline (Zero-shot) 예측</strong>
+                        <p><span class="error-text">YOU</span> WOULD HAVE TO PAY HER THE MONEY, WHICH SHE WOULD NOW
+                            <span class="error-text">REGULATE AS A MAN.</span> OR THERE WOULD BE TROUBLE. IT <span
+                                class="error-text">DOES</span> NOT MATTER WHAT <span class="error-text">SHE</span> DID.
+                        </p>
+                        <span style="font-size: 0.85rem; color: #64748b;">* 'regularly demand'를 'regulate as a man'으로
+                            완전히 다르게 인식함</span>
+                    </div>
+                </div>
+                <div class="transcript-compare"
+                    style="grid-template-columns: 1fr; background: #f0fdf4; border: 1px solid #bbf7d0;">
+                    <div class="transcript-item">
+                        <strong style="color: #166534;">Tactical Whisper (LoRA r=8) 예측</strong>
+                        <p>HE WOULD HAVE TO PAY HER THE MONEY WHICH SHE WOULD NOW REGULARLY DEMAND OR THERE WOULD BE
+                            TROUBLE IT DID NOT MATTER WHAT <span
+                                style="color: #ea580c; text-decoration: underline;">SHE</span> DID</p>
+                        <span style="font-size: 0.85rem; color: #166534;">* 마지막 대명사(HE -> SHE) 오류 하나를 제외하고 노이즈 속에서도 원본
+                            스크립트를 거의 100% 복구함</span>
                     </div>
                 </div>
             </div>
@@ -504,7 +538,8 @@
                     <span class="badge" style="background-color: #e0e7ff; color: #3730a3;">Step 1</span>
                     <h3 style="margin-top: 15px;">저장소 Fork 및 환경 세팅</h3>
                     <p>공식 GitHub 저장소를 Fork한 후, <code>requirements.txt</code>를 통해 필요한 라이브러리를 설치합니다. 원활한 학습을 위해
-                        <strong>Google Colab T4 GPU</strong> 이상의 환경을 권장합니다.</p>
+                        <strong>Google Colab T4 GPU</strong> 이상의 환경을 권장합니다.
+                    </p>
                 </div>
                 <div class="tech-card">
                     <span class="badge" style="background-color: #e0e7ff; color: #3730a3;">Step 2</span>
@@ -516,7 +551,8 @@
                     <span class="badge" style="background-color: #e0e7ff; color: #3730a3;">Step 3</span>
                     <h3 style="margin-top: 15px;">결과 제출 (Submission)</h3>
                     <p>평가 스크립트를 실행하여 생성된 <code>eval_results.json</code> 파일과 훈련된 LoRA 어댑터(Adapter) 가중치를 메인 저장소로
-                        <strong>Pull Request</strong> 합니다.</p>
+                        <strong>Pull Request</strong> 합니다.
+                    </p>
                 </div>
             </div>
         </section>
