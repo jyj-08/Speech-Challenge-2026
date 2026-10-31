@@ -435,26 +435,27 @@
                     <span class="badge" style="background-color: #dbeafe; color: #1e40af;">Insight 1</span>
                     <h3 style="margin-top: 15px;">최적의 파라미터 효율성</h3>
                     <p><strong>LoRA r=8 (q, v)</strong> 구성은 Baseline 대비 WER을 <strong>약 26.5%p 감소</strong>시켰습니다. 모델 전체를
-                        학습하지 않고 핵심 어텐션 병목(Bottleneck)인 Query와 Value 프로젝션만 가볍게 튜닝하는 전략이 극단적 잡음 환경에서 가장 효과적이었습니다.</p>
+                        학습하지 않고 핵심 어텐션 Bottleneck인 Query와 Value 프로젝션만 가볍게 튜닝하는 전략이 극단적 잡음 환경에서 가장 효과적이었습니다.</p>
                 </div>
                 <div class="tech-card">
                     <span class="badge" style="background-color: #fef08a; color: #854d0e;">Insight 2</span>
                     <h3 style="margin-top: 15px;">Rank 증가의 역효과</h3>
                     <p>Rank를 32로 늘려 파라미터 용량을 키운 모델은 오히려 r=8 모델보다 오답률이 소폭 상승했습니다. 제한된 데이터셋 환경에서는 파라미터 과잉이
-                        <strong>과적합(Overfitting)</strong>이나 최적화 불안정을 유발할 수 있음을 시사합니다.</p>
+                        <strong>Overfitting</strong>이나 최적화 불안정을 유발할 수 있음을 시사합니다.
+                    </p>
                 </div>
                 <div class="tech-card">
                     <span class="badge" style="background-color: #fee2e2; color: #991b1b;">Insight 3</span>
-                    <h3 style="margin-top: 15px;">학습 붕괴 (Divergence)</h3>
+                    <h3 style="margin-top: 15px;">학습 붕괴</h3>
                     <p>모든 어텐션 모듈을 타겟으로 한 모델은 WER이 331%를 초과했습니다. 이는 사전 학습된 모델의 유용한 표현력이 과도한 업데이트로 인해 무너지는 <strong>망각
-                            현상(Catastrophic Forgetting)</strong>이 발생했기 때문입니다.</p>
+                            현상Catastrophic Forgetting</strong>이 발생했기 때문입니다.</p>
                 </div>
             </div>
         </section>
         </table>
         </section>
         <section id="examples">
-            <h2>사례 (Examples)</h2>
+            <h2>Examples</h2>
             <p>동일한 대화 스크립트가 전장 환경에서 어떻게 변형되며, 제안하는 모델이 이를 어떻게 극복하는지 보여주는 샘플입니다.</p>
 
             <div class="example-box">
