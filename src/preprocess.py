@@ -2,6 +2,7 @@
 
 Includes tactical radio degradation simulation (narrowband filtering + Gaussian noise)
 and Hugging Face Whisper feature extraction and batch collation.
+Robust against various audio data structures including dict and torchcodec AudioDecoder.
 """
 
 from dataclasses import dataclass
@@ -48,11 +49,28 @@ class TacticalAudioDegrader:
         return noisy_audio
 
     def __call__(self, batch: Dict[str, Any]) -> Dict[str, Any]:
-        """Apply degradation to a single batch dict from a Hugging Face Dataset."""
+        """Apply degradation to a single batch dict from a Hugging Face Dataset.
+
+        Safely handles both dictionary and custom object audio representations
+        (e.g., torchcodec AudioDecoder) without relying on dict-only methods like .get().
+        """
         audio_data = batch["audio"]
-        audio_array = audio_data["array"]
-        sample_rate = audio_data["sampling_rate"]
-        audio_path = audio_data.get("path", "")
+
+        try:
+            audio_array = audio_data["array"]
+        except (KeyError, AttributeError, TypeError):
+            audio_array = getattr(audio_data, "array", None)
+
+        try:
+            sample_rate = audio_data["sampling_rate"]
+        except (KeyError, AttributeError, TypeError):
+            sample_rate = getattr(audio_data, "sampling_rate", 16000)
+
+        # Safely access audio path without using dict-only .get()
+        try:
+            audio_path = audio_data["path"]
+        except (KeyError, AttributeError, TypeError):
+            audio_path = ""
 
         noisy_audio = self.degrade_audio(audio_array, sample_rate)
 
@@ -90,8 +108,19 @@ def prepare_dataset_for_whisper(
     """
     def _prepare(batch):
         audio = batch["audio"]
+
+        try:
+            audio_array = audio["array"]
+        except (KeyError, AttributeError, TypeError):
+            audio_array = getattr(audio, "array", None)
+
+        try:
+            sample_rate = audio["sampling_rate"]
+        except (KeyError, AttributeError, TypeError):
+            sample_rate = getattr(audio, "sampling_rate", 16000)
+
         batch["input_features"] = processor.feature_extractor(
-            audio["array"], sampling_rate=audio["sampling_rate"]
+            audio_array, sampling_rate=sample_rate
         ).input_features[0]
         batch["labels"] = processor.tokenizer(batch["text"]).input_ids
         return batch
@@ -130,4 +159,3 @@ class DataCollatorSpeechSeq2SeqWithPadding:
 
         batch["labels"] = labels
         return batch
-

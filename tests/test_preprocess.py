@@ -14,6 +14,24 @@ if parent_dir not in sys.path:
 from src.preprocess import TacticalAudioDegrader
 
 
+class MockAudioDecoder:
+    """Mock class simulating torchcodec AudioDecoder object (no .get() method)."""
+
+    def __init__(self, array: np.ndarray, sampling_rate: int = 16000, path: str = "test.wav"):
+        self._data = {
+            "array": array,
+            "sampling_rate": sampling_rate,
+            "path": path,
+        }
+
+    def __getitem__(self, key: str):
+        if key in self._data:
+            return self._data[key]
+        raise KeyError(key)
+
+    # Intentionally has no .get() method to test robustness against AttributeError
+
+
 @pytest.fixture
 def sample_audio_data():
     """Generate dummy audio data fixture (1 second of 16kHz sine wave)."""
@@ -79,6 +97,26 @@ def test_apply_tactical_degradation_batch_dict(sample_audio_data):
     assert audio_info["sampling_rate"] == 16000, "Sampling rate was altered"
 
 
+def test_apply_tactical_degradation_with_audio_decoder():
+    """Test degradation on mock AudioDecoder object without .get() method (regression test)."""
+    degrader = TacticalAudioDegrader()
+    dummy_audio = np.random.uniform(-0.5, 0.5, 16000).astype(np.float32)
+
+    decoder_obj = MockAudioDecoder(dummy_audio, sampling_rate=16000, path="audio_stream.wav")
+    batch = {
+        "audio": decoder_obj,
+        "text": "DECODER COMPATIBILITY TEST",
+    }
+
+    # Should succeed without AttributeError: 'AudioDecoder' object has no attribute 'get'
+    processed_batch = degrader(batch)
+
+    assert "audio" in processed_batch
+    assert isinstance(processed_batch["audio"], dict)
+    assert processed_batch["audio"]["path"] == "audio_stream.wav"
+    assert len(processed_batch["audio"]["array"]) == 16000
+
+
 @pytest.mark.parametrize("duration_sec", [0.25, 0.5, 2.0])
 def test_degrader_various_audio_lengths(duration_sec):
     """Test degradation across various audio lengths (ensures no fixed tensor dimension bounds)."""
@@ -97,4 +135,3 @@ if __name__ == "__main__":
     import pytest
 
     pytest.main([__file__, "-v"])
-
