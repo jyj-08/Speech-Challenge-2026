@@ -191,7 +191,29 @@ def load_model_for_eval(
     base_model, processor = load_whisper_model_and_processor(model_id, device=device)
 
     if checkpoint_dir and os.path.exists(checkpoint_dir):
-        print(f"Loading LoRA weights from checkpoint: {checkpoint_dir}")
+        # checkpoint- 로 시작하는 하위 디렉토리 목록 스캔
+        subdirs = [
+            d for d in os.listdir(checkpoint_dir)
+            if os.path.isdir(os.path.join(checkpoint_dir, d)) and d.startswith("checkpoint-")
+        ]
+
+        if subdirs:
+            # step 번호(숫자) 기준 또는 최종 수정 시간 기준으로 가장 최신 디렉토리 선택
+            def _extract_step(d: str) -> int:
+                parts = d.split("-")
+                if len(parts) >= 2 and parts[-1].isdigit():
+                    return int(parts[-1])
+                return 0
+
+            latest_subdir = max(
+                subdirs,
+                key=lambda d: (_extract_step(d), os.path.getmtime(os.path.join(checkpoint_dir, d))),
+            )
+            checkpoint_dir = os.path.join(checkpoint_dir, latest_subdir)
+            print(f"[INFO] 발견된 최신 체크포인트 경로: {checkpoint_dir}")
+        else:
+            print(f"[INFO] 지정된 체크포인트 경로: {checkpoint_dir}")
+
         model = PeftModel.from_pretrained(base_model, checkpoint_dir)
     else:
         model = base_model
