@@ -1,0 +1,25 @@
+# Core Deep Learning & Audio
+torch
+torchaudio
+torchao
+soundfile
+numpy
+
+# Audio Augmentation & Degradation
+audiomentations
+
+# Hugging Face Ecosystem
+datasets
+transformers
+accelerate
+peft
+evaluate
+jiwer
+
+# Progress & Visualization
+tqdm
+matplotlib
+
+# Configuration & Testing
+pyyaml
+pytest
