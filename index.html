@@ -286,10 +286,10 @@
                 <li><a href="#task">과제 정의</a></li>
                 <li><a href="#dataset">데이터셋</a></li>
                 <li><a href="#evaluation">평가 방법</a></li>
-                <li><a href="#baseline">베이스라인</a></li>
                 <li><a href="#leaderboard">리더보드</a></li>
-                <li><a href="#examples">사례 (Examples)</a></li>
-                <li><a href="#resources">코드와 자료</a></li>
+                <li><a href="#participation">참가 방법</a></li>
+                <li><a href="#sample-data">샘플 데이터</a></li>
+                <li><a href="#references">참고 자료</a></li>
             </ul>
         </nav>
     </header>
@@ -493,6 +493,95 @@
                     </div>
                 </div>
             </div>
+        </section>
+
+        <!-- 1. 참가 방법 Section -->
+        <section id="participation">
+            <h2>참가 방법 (How to Participate)</h2>
+            <p>Tactical Whisper 챌린지에 참여하여 본인만의 파라미터 효율적 파인튜닝(PEFT) 모델을 제출하는 방법은 다음과 같습니다.</p>
+            <div class="tech-grid">
+                <div class="tech-card">
+                    <span class="badge" style="background-color: #e0e7ff; color: #3730a3;">Step 1</span>
+                    <h3 style="margin-top: 15px;">저장소 Fork 및 환경 세팅</h3>
+                    <p>공식 GitHub 저장소를 Fork한 후, <code>requirements.txt</code>를 통해 필요한 라이브러리를 설치합니다. 원활한 학습을 위해
+                        <strong>Google Colab T4 GPU</strong> 이상의 환경을 권장합니다.</p>
+                </div>
+                <div class="tech-card">
+                    <span class="badge" style="background-color: #e0e7ff; color: #3730a3;">Step 2</span>
+                    <h3 style="margin-top: 15px;">모델 훈련 (Fine-tuning)</h3>
+                    <p>제공된 <code>train.py</code> 스크립트를 활용하여 LoRA 하이퍼파라미터(Rank, Alpha, Target Modules)를 자유롭게 튜닝하며 모델을
+                        학습시킵니다. (예: q_proj, v_proj 타겟팅)</p>
+                </div>
+                <div class="tech-card">
+                    <span class="badge" style="background-color: #e0e7ff; color: #3730a3;">Step 3</span>
+                    <h3 style="margin-top: 15px;">결과 제출 (Submission)</h3>
+                    <p>평가 스크립트를 실행하여 생성된 <code>eval_results.json</code> 파일과 훈련된 LoRA 어댑터(Adapter) 가중치를 메인 저장소로
+                        <strong>Pull Request</strong> 합니다.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. 샘플 데이터 Section -->
+        <section id="sample-data">
+            <h2>샘플 데이터 구조 (Sample Data)</h2>
+            <p>데이터는 고정된 파일이 아닌, Hugging Face <code>datasets</code>를 통해 스트리밍되며 On-the-fly로 노이즈가 합성됩니다. 평가 시 모델이 입력받는 최종
+                데이터 형식은 아래 JSON 구조와 같습니다.</p>
+
+            <div
+                style="background-color: #0f172a; padding: 20px; border-radius: 8px; overflow-x: auto; color: #e2e8f0; font-family: monospace; font-size: 0.95rem; margin-top: 15px;">
+                <pre style="margin: 0;"><code>{
+  "audio": {
+    "path": "374-180298-0000.flac",
+    "array": [0.00124, -0.00231, 0.00512, ...], // 16kHz 리샘플링된 1D Tensor
+    "sampling_rate": 16000
+  },
+  "text": "the tactical situation requires immediate evacuation of sector seven.",
+  "degradation_metadata": {
+    "snr_db": -2.4,
+    "applied_filters": ["BandPass(300Hz-2500Hz)", "GaussianWhiteNoise"]
+  }
+}</code></pre>
+            </div>
+            <p style="margin-top: 15px; font-size: 0.9rem; color: var(--secondary);">※ 오디오 <code>array</code> 데이터는 전장 환경
+                시뮬레이션을 위해 원본 LibriSpeech 신호에 대역폭 제한과 백색 소음이 합성된 상태입니다.</p>
+        </section>
+
+        <!-- 3. 참고 자료 Section -->
+        <section id="references">
+            <h2>참고 자료 (References)</h2>
+            <p>성공적인 파인튜닝 전략 수립을 위해 반드시 읽어보아야 할 핵심 논문과 라이브러리 공식 문서입니다.</p>
+            <ul style="list-style-type: none; padding-left: 0;">
+                <li
+                    style="margin-bottom: 15px; padding: 20px; background: var(--bg-light); border-radius: 8px; border: 1px solid var(--border);">
+                    <strong style="color: var(--primary-dark); font-size: 1.1rem;">📄 Robust Speech Recognition via
+                        Large-Scale Weak Supervision</strong><br>
+                    <span style="color: var(--secondary); display: block; margin-top: 5px;">OpenAI의 Whisper 모델 원논문. 모델의
+                        기본 아키텍처와 노이즈 환경에서의 제로샷(Zero-shot) 한계점을 파악할 수 있습니다.</span>
+                    <a href="https://arxiv.org/abs/2212.04356" target="_blank"
+                        style="display: inline-block; margin-top: 10px; color: var(--primary); text-decoration: none; font-weight: 600;">논문
+                        읽기 (arXiv) ↗</a>
+                </li>
+                <li
+                    style="margin-bottom: 15px; padding: 20px; background: var(--bg-light); border-radius: 8px; border: 1px solid var(--border);">
+                    <strong style="color: var(--primary-dark); font-size: 1.1rem;">📄 LoRA: Low-Rank Adaptation of Large
+                        Language Models</strong><br>
+                    <span style="color: var(--secondary); display: block; margin-top: 5px;">본 챌린지의 핵심인 파라미터 효율적 튜닝(PEFT)
+                        기법의 원논문. 적은 가중치 업데이트만으로 모델 성능을 유지하는 수학적 배경을 제공합니다.</span>
+                    <a href="https://arxiv.org/abs/2106.09685" target="_blank"
+                        style="display: inline-block; margin-top: 10px; color: var(--primary); text-decoration: none; font-weight: 600;">논문
+                        읽기 (arXiv) ↗</a>
+                </li>
+                <li
+                    style="padding: 20px; background: var(--bg-light); border-radius: 8px; border: 1px solid var(--border);">
+                    <strong style="color: var(--primary-dark); font-size: 1.1rem;">🛠️ Hugging Face PEFT & Transformers
+                        Documentation</strong><br>
+                    <span style="color: var(--secondary); display: block; margin-top: 5px;">실제 코드를 작성할 때 참조해야 하는 공식 API
+                        가이드. <code>LoraConfig</code> 및 타겟 모듈 설정 방법을 확인할 수 있습니다.</span>
+                    <a href="https://huggingface.co/docs/peft/index" target="_blank"
+                        style="display: inline-block; margin-top: 10px; color: var(--primary); text-decoration: none; font-weight: 600;">PEFT
+                        공식 문서 ↗</a>
+                </li>
+            </ul>
         </section>
 
         <section id="resources">
